@@ -1,0 +1,246 @@
+{
+  "version": 1,
+  "parse": [
+    {
+      "name": "ignores empty, whitespace-only, and column-zero comment lines",
+      "input": "\n  \t\r\n# comment <ignored@example.com>\n",
+      "entries": []
+    },
+    {
+      "name": "parses name-only replacement",
+      "input": "Proper Name <commit@email>\n",
+      "entries": [
+        {
+          "newName": "Proper Name",
+          "newEmail": null,
+          "oldEmail": "commit@email",
+          "oldName": null
+        }
+      ]
+    },
+    {
+      "name": "parses email-only replacement",
+      "input": "<Proper@Email> <Commit@Email>\n",
+      "entries": [
+        {
+          "newName": null,
+          "newEmail": "Proper@Email",
+          "oldEmail": "commit@email",
+          "oldName": null
+        }
+      ]
+    },
+    {
+      "name": "parses name and email replacement",
+      "input": "Proper Name <proper@email> <commit@email>\n",
+      "entries": [
+        {
+          "newName": "Proper Name",
+          "newEmail": "proper@email",
+          "oldEmail": "commit@email",
+          "oldName": null
+        }
+      ]
+    },
+    {
+      "name": "parses name-specific name and email replacement",
+      "input": "Proper Name <proper@email> Commit Name <commit@email>\n",
+      "entries": [
+        {
+          "newName": "Proper Name",
+          "newEmail": "proper@email",
+          "oldEmail": "commit@email",
+          "oldName": "Commit Name"
+        }
+      ]
+    },
+    {
+      "name": "parses name-specific email-only replacement",
+      "input": "<proper@email> Commit Name <commit@email>\n",
+      "entries": [
+        {
+          "newName": null,
+          "newEmail": "proper@email",
+          "oldEmail": "commit@email",
+          "oldName": "Commit Name"
+        }
+      ]
+    },
+    {
+      "name": "treats a hash after whitespace as part of a name",
+      "input": "  # Not A Comment <commit@email>\n",
+      "entries": [
+        {
+          "newName": "# Not A Comment",
+          "newEmail": null,
+          "oldEmail": "commit@email",
+          "oldName": null
+        }
+      ]
+    },
+    {
+      "name": "ignores malformed lines and no-op single-email lines",
+      "input": "no angle brackets\nName <unclosed\nName <>\n<commit@email>\n",
+      "entries": []
+    },
+    {
+      "name": "keeps the first identity when the second is malformed",
+      "input": "Canonical Name <mapped@example.com> Ignored <broken\n",
+      "entries": [
+        {
+          "newName": "Canonical Name",
+          "newEmail": null,
+          "oldEmail": "mapped@example.com",
+          "oldName": null
+        }
+      ]
+    },
+    {
+      "name": "allows an empty second email",
+      "input": "Canonical Name <canonical@example.com> <>\n",
+      "entries": [
+        {
+          "newName": "Canonical Name",
+          "newEmail": "canonical@example.com",
+          "oldEmail": "",
+          "oldName": null
+        }
+      ]
+    },
+    {
+      "name": "ignores trailing comments and a third email",
+      "input": "Canonical <canonical@example.com> <mapped@example.com> # secondary <ignored@example.com>\n",
+      "entries": [
+        {
+          "newName": "Canonical",
+          "newEmail": "canonical@example.com",
+          "oldEmail": "mapped@example.com",
+          "oldName": null
+        }
+      ]
+    },
+    {
+      "name": "supports unicode names and CRLF",
+      "input": "  Жанна Д’Арк  <JEANNE@EXAMPLE.COM>\r\n",
+      "entries": [
+        {
+          "newName": "Жанна Д’Арк",
+          "newEmail": null,
+          "oldEmail": "jeanne@example.com",
+          "oldName": null
+        }
+      ]
+    }
+  ],
+  "resolve": [
+    {
+      "name": "returns an unmatched identity unchanged",
+      "mailmap": "Proper <proper@example.com> <old@example.com>\n",
+      "input": { "name": "Other", "email": "other@example.com" },
+      "identity": { "name": "Other", "email": "other@example.com" }
+    },
+    {
+      "name": "matches email without ASCII case sensitivity",
+      "mailmap": "Proper Name <Commit@Email>\n",
+      "input": { "name": "Old Name", "email": "commit@email" },
+      "identity": { "name": "Proper Name", "email": "commit@email" }
+    },
+    {
+      "name": "matches a specific name without ASCII case sensitivity",
+      "mailmap": "Proper <proper@email> Commit Name <commit@email>\n",
+      "input": { "name": "commit name", "email": "COMMIT@EMAIL" },
+      "identity": { "name": "Proper", "email": "proper@email" }
+    },
+    {
+      "name": "does not apply Unicode case folding",
+      "mailmap": "Proper <proper@email> Änne <commit@email>\n",
+      "input": { "name": "änne", "email": "commit@email" },
+      "identity": { "name": "änne", "email": "commit@email" }
+    },
+    {
+      "name": "prefers a matching specific entry over a later general entry",
+      "mailmap": "Specific <specific@email> Commit <old@email>\nGeneral <general@email> <old@email>\n",
+      "input": { "name": "Commit", "email": "old@email" },
+      "identity": { "name": "Specific", "email": "specific@email" }
+    },
+    {
+      "name": "falls back to a general entry when a specific name does not match",
+      "mailmap": "General <general@email> <old@email>\nSpecific <specific@email> Commit <old@email>\n",
+      "input": { "name": "Someone Else", "email": "old@email" },
+      "identity": { "name": "General", "email": "general@email" }
+    },
+    {
+      "name": "does not match a specific entry when the input name is null",
+      "mailmap": "Specific <specific@email> Commit <old@email>\n",
+      "input": { "name": null, "email": "old@email" },
+      "identity": { "name": null, "email": "old@email" }
+    },
+    {
+      "name": "uses the last duplicate specific entry",
+      "mailmap": "First <first@email> Commit <old@email>\nLast <last@email> commit <OLD@EMAIL>\n",
+      "input": { "name": "COMMIT", "email": "old@email" },
+      "identity": { "name": "Last", "email": "last@email" }
+    },
+    {
+      "name": "merges fields from duplicate general entries",
+      "mailmap": "Canonical Name <old@email>\n<canonical@email> <OLD@EMAIL>\n",
+      "input": { "name": "Old Name", "email": "old@email" },
+      "identity": { "name": "Canonical Name", "email": "canonical@email" }
+    },
+    {
+      "name": "maps an empty email",
+      "mailmap": "Canonical <canonical@email> <>\n",
+      "input": { "name": "Old", "email": "" },
+      "identity": { "name": "Canonical", "email": "canonical@email" }
+    }
+  ],
+  "serialize": [
+    {
+      "name": "serializes an empty list",
+      "entries": [],
+      "output": ""
+    },
+    {
+      "name": "serializes all supported forms",
+      "entries": [
+        {
+          "newName": "Name",
+          "newEmail": null,
+          "oldEmail": "old-1",
+          "oldName": null
+        },
+        {
+          "newName": null,
+          "newEmail": "new-2",
+          "oldEmail": "old-2",
+          "oldName": null
+        },
+        {
+          "newName": "Name",
+          "newEmail": "new-3",
+          "oldEmail": "old-3",
+          "oldName": null
+        },
+        {
+          "newName": "Name",
+          "newEmail": "new-4",
+          "oldEmail": "old-4",
+          "oldName": "Old Name"
+        },
+        {
+          "newName": null,
+          "newEmail": "new-5",
+          "oldEmail": "old-5",
+          "oldName": "Old Name"
+        },
+        {
+          "newName": "Empty",
+          "newEmail": "new-6",
+          "oldEmail": "",
+          "oldName": null
+        }
+      ],
+      "output": "Name <old-1>\n<new-2> <old-2>\nName <new-3> <old-3>\nName <new-4> Old Name <old-4>\n<new-5> Old Name <old-5>\nEmpty <new-6> <>\n"
+    }
+  ]
+}
