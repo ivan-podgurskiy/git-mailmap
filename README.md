@@ -128,7 +128,7 @@ throw `TypeError`.
 
 ## Runtime support and scope
 
-The package exports minified ESM and CommonJS builds plus `.d.ts` and `.d.cts`
+The package exports ESM and CommonJS builds plus `.d.ts` and `.d.cts`
 TypeScript declarations. Node.js 18 or newer is supported. The implementation
 uses platform-neutral string operations and can be bundled for browsers.
 
@@ -147,5 +147,4 @@ performance work.
 
 ## License
 
-MIT. See [THIRD_PARTY_NOTICES.md](./THIRD_PARTY_NOTICES.md) for compatibility
-research provenance.
+MIT.

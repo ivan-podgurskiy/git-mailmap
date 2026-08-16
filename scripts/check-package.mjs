@@ -36,6 +36,10 @@ if (JSON.stringify(actual) !== JSON.stringify(expected)) {
   );
 }
 
+if (readFileSync('README.md', 'utf8').includes('THIRD_PARTY_NOTICES.md')) {
+  throw new Error('README.md references a file excluded from the package.');
+}
+
 for (const path of ['dist/index.cjs', 'dist/index.js']) {
   const lines = readFileSync(path, 'utf8').split('\n');
   const longestLine = Math.max(...lines.map((line) => line.length));
