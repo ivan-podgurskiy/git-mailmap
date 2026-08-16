@@ -27,8 +27,7 @@
   "files": [
     "dist",
     "CHANGELOG.md",
-    "ROADMAP.md",
-    "THIRD_PARTY_NOTICES.md"
+    "ROADMAP.md"
   ],
   "engines": {
     "node": ">=18"
@@ -43,7 +42,7 @@
     "parser"
   ],
   "scripts": {
-    "build": "tsup src/index.ts --format esm,cjs --dts --clean --minify",
+    "build": "tsup src/index.ts --format esm,cjs --dts --clean",
     "format": "prettier --write .",
     "format:check": "prettier --check .",
     "pack:check": "npm run build && node scripts/check-package.mjs",
