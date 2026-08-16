@@ -2,6 +2,7 @@
   "name": "git-mailmap",
   "version": "1.0.0",
   "description": "Parse, resolve, and serialize Git .mailmap files.",
+  "author": "Ivan Podgurskiy",
   "license": "MIT",
   "repository": {
     "type": "git",
@@ -24,7 +25,10 @@
     }
   },
   "files": [
-    "dist"
+    "dist",
+    "CHANGELOG.md",
+    "ROADMAP.md",
+    "THIRD_PARTY_NOTICES.md"
   ],
   "engines": {
     "node": ">=18"
@@ -42,6 +46,8 @@
     "build": "tsup src/index.ts --format esm,cjs --dts --clean --minify",
     "format": "prettier --write .",
     "format:check": "prettier --check .",
+    "pack:check": "npm run build && node scripts/check-package.mjs",
+    "prepack": "npm run build",
     "test": "vitest run",
     "typecheck": "tsc --noEmit"
   },

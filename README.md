@@ -33,6 +33,32 @@ CommonJS is available through the same package entry point:
 const { parse, resolve, serialize } = require('git-mailmap');
 ```
 
+## Entry format
+
+`parse` returns `MailmapEntry[]`:
+
+```ts
+interface MailmapEntry {
+  newName: string | null;
+  newEmail: string | null;
+  oldEmail: string;
+  oldName: string | null;
+}
+```
+
+The parser accepts the Git-compatible forms below:
+
+```text
+Proper Name <commit@email>
+<proper@email> <commit@email>
+Proper Name <proper@email> <commit@email>
+Proper Name <proper@email> Commit Name <commit@email>
+<proper@email> Commit Name <commit@email>
+```
+
+Only a `#` in the first column starts a comment. Matching of names and emails
+uses ASCII case-insensitive comparison, as Git does.
+
 ## API
 
 ### `parse(content)`
@@ -59,7 +85,12 @@ throw `TypeError`.
 The package handles strings only. Reading `.mailmap` files, Git configuration,
 Git blobs, and command-line integration are intentionally left to consumers.
 
+## Roadmap
+
+See [ROADMAP.md](./ROADMAP.md) for planned compatibility, testing, and
+performance work.
+
 ## License
 
-MIT
-Parse, resolve, and serialize Git .mailmap files in TypeScript.
+MIT. See [THIRD_PARTY_NOTICES.md](./THIRD_PARTY_NOTICES.md) for compatibility
+research provenance.
