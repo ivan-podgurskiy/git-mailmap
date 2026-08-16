@@ -1,5 +1,5 @@
 import { execFileSync } from 'node:child_process';
-import { mkdtempSync, rmSync } from 'node:fs';
+import { mkdtempSync, readFileSync, rmSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 
@@ -23,7 +23,6 @@ const expected = [
   'LICENSE',
   'README.md',
   'ROADMAP.md',
-  'THIRD_PARTY_NOTICES.md',
   'dist/index.cjs',
   'dist/index.d.cts',
   'dist/index.d.ts',
@@ -35,6 +34,17 @@ if (JSON.stringify(actual) !== JSON.stringify(expected)) {
   throw new Error(
     `Unexpected package contents.\nExpected: ${expected.join(', ')}\nActual: ${actual.join(', ')}`,
   );
+}
+
+for (const path of ['dist/index.cjs', 'dist/index.js']) {
+  const lines = readFileSync(path, 'utf8').split('\n');
+  const longestLine = Math.max(...lines.map((line) => line.length));
+
+  if (longestLine > 500) {
+    throw new Error(
+      `${path} appears to be minified (longest line: ${longestLine} characters).`,
+    );
+  }
 }
 
 console.log(`Package contents verified (${actual.length} files).`);
