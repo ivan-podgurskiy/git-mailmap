@@ -1,6 +1,6 @@
 {
   "name": "git-mailmap",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "description": "Parse, resolve, and serialize Git .mailmap files in JavaScript and TypeScript to canonicalize author and committer identities.",
   "author": "Ivan Podgurskiy",
   "license": "MIT",
