@@ -11,7 +11,7 @@ contributor names and email addresses to canonical author and committer
 identities, so aliases are treated as the same person.
 
 Use `git-mailmap` when an application needs to process those mappings without
-invoking Git or reading a repository. The package works in Node.js 18 or newer
+invoking Git or reading a repository. The package works in Node.js 20 or newer
 and browsers, ships ESM and CommonJS builds with TypeScript declarations, and
 has no runtime dependencies.
 
@@ -129,7 +129,7 @@ throw `TypeError`.
 ## Runtime support and scope
 
 The package exports ESM and CommonJS builds plus `.d.ts` and `.d.cts`
-TypeScript declarations. Node.js 18 or newer is supported. The implementation
+TypeScript declarations. Node.js 20 or newer is supported. The implementation
 uses platform-neutral string operations and can be bundled for browsers.
 
 `git-mailmap` implements the string-based parsing, matching, precedence, and
