@@ -1,6 +1,6 @@
 # Changelog
 
-## 1.1.0 - 2026-08-17
+## 1.1.0 - 2026-08-18
 
 - Require Node.js 20 or newer; Node.js 18 is no longer supported.
 - Ship readable ESM and CommonJS bundles instead of minified output.
